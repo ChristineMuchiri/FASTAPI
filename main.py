@@ -2,6 +2,7 @@ from fastapi import FastAPI, Form
 from enum import Enum
 from pydantic import BaseModel
 from typing import Annotated
+from fastapi.middleware.cors import CORSMiddleware
 
 
 class ModelName(str, Enum):
@@ -18,6 +19,25 @@ class Item(BaseModel):
 app = FastAPI()
 
 fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}]
+
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+async def main():
+    return {"message": "Hello World"}
 
 @app.post("/login/")
 async def login(username: Annotated[str, Form()], password: Annotated[str, Form()]):
