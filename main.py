@@ -1,6 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Form
 from enum import Enum
 from pydantic import BaseModel
+from typing import Annotated
+
 
 class ModelName(str, Enum):
     alexnet = "alexnet"
@@ -16,6 +18,10 @@ class Item(BaseModel):
 app = FastAPI()
 
 fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}]
+
+@app.post("/login/")
+async def login(username: Annotated[str, Form()], password: Annotated[str, Form()]):
+    return {"username": username}
 
 @app.post("/items/")
 async def create_item(item: Item):
